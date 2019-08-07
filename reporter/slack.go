@@ -32,11 +32,13 @@ func NewSlackReporter(token, channel string) *SlackReporter {
 	}
 }
 
+// Post is send func for slack.
 func (s SlackReporter) Post(ctx context.Context, msg string) (string, error) {
 	_, ts, err := s.api.PostMessageContext(ctx, s.channel, slack.MsgOptionText(msg, false))
 	return ts, err
 }
 
+// PostThread is send func for slack thread. timestamp is parent message timestamp.
 func (s SlackReporter) PostThread(ctx context.Context, timeStamp, msg string) error {
 	_, _, err := s.api.PostMessageContext(ctx, s.channel, slack.MsgOptionText(msg, false), slack.MsgOptionTS(timeStamp))
 	return err
