@@ -1,0 +1,26 @@
+#!/bin/sh
+# To use, store as .git/hooks/pre-commit inside your repository and make sure
+# it has execute permissions.
+echo "githooks/pre-commit runs..."
+
+gofiles=$(git diff --cached --name-only --diff-filter=ACM | grep '\.go$')
+[[ -z "$gofiles" ]] && exit 0
+
+unformatted=$(gofmt -l ${gofiles})
+if [[ -z "$unformatted" ]]; then
+    # go test
+    FILES=$(go list ./...)
+    go test -tags=unit -timeout 10s -short -v ${FILES}
+    return=$?
+    if [[ ${return} -ne 0 ]]; then
+      echo "unit tests failed"
+      exit 1
+    fi
+else
+    # Some files are not gofmt'd. Print message and fail.
+    echo >&2 "Go files must be formatted with gofmt. Please run:"
+    for fn in ${unformatted}; do
+        echo >&2 "  gofmt -w $PWD/$fn"
+    done
+    exit 1
+fi
