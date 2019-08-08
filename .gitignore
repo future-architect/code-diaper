@@ -4,9 +4,18 @@
 *.dll
 *.so
 *.dylib
+*.go~
+*.un~
+*.md~
 
 # Test binary, build with `go test -c`
 *.test
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+
+### Goland ###
+.idea
+
+# Prohibit accidentally committing gcp credentials file
+*.json
